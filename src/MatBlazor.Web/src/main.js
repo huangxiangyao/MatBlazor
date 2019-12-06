@@ -20,7 +20,7 @@ import * as matDrawer from './matDrawer/matDrawer';
 import * as matMenu from './matMenu/matMenu';
 import * as matTypography from './matTypography/matTypography';
 import * as matElevation from './matElevation/matElevation';
-import * as matAutocomplete from './matAutocomplete/matAutocomplete';
+import * as matAutocompleteList from './matAutocompleteList/matAutocompleteList';
 import * as matProgressBar from './matProgressBar/matProgressBar';
 import * as matDialog from './matDialog/matDialog';
 import * as matLayoutGrid from './matLayoutGrid/matLayoutGrid';
@@ -33,10 +33,12 @@ import * as matAccordion from './matAccordion/matAccordion';
 import * as matTooltip from './matTooltip/matTooltip';
 import * as utils from './utils/utils';
 import * as matHidden from './matHidden/matHidden';
+import * as matAnchor from './matAnchor/matAnchor';
+import * as matFileUpload from './matFileUpload/matFileUpload';
 
 
 window.matBlazor = {
-  matAutocomplete,
+  matAutocompleteList,
   matButton,
   matCheckbox,
   matTextField,
@@ -65,6 +67,8 @@ window.matBlazor = {
   matAccordion,
   matTooltip,
   matHidden,
+  matAnchor,
+  matFileUpload,
   utils,
 };
 
