@@ -1,52 +1,48 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace MatBlazor
 {
     /// <summary>
     /// Sliders let users select from a range of values by moving the slider thumb. 
     /// </summary>
-    public class BaseMatSlider<TValue> : BaseMatInputComponent<TValue>
+    public class BaseMatSlider : BaseMatDomComponent
     {
-        protected MatDotNetObjectReference<MatSliderJsHelper> jsHelper;
+        protected JsHelper jsHelper;
+
+        private decimal _value;
+
+
+        private DotNetObjectReference<JsHelper> dotNetObjectRef;
 
         public BaseMatSlider()
         {
-            jsHelper = new MatDotNetObjectReference<MatSliderJsHelper>(new MatSliderJsHelper());
-            jsHelper.Value.OnChangeEvent += Value_OnChangeEvent;
-            ValueMin = SwitchT.Minimum;
-            ValueMax = SwitchT.Maximum;
-            Step = SwitchT.Step;
+            jsHelper = new JsHelper(this);
             
             ClassMapper
-                .Add("mat-slider")
                 .Add("mdc-slider")
                 .If("mdc-slider--discrete", () => Discrete);
-
             CallAfterRender(async () =>
             {
-                await JsInvokeAsync<object>("matBlazor.matSlider.init", Ref, jsHelper.Reference);
+                dotNetObjectRef = dotNetObjectRef??CreateDotNetObjectRef(jsHelper);
+                await JsInvokeAsync<object>("matBlazor.matSlider.init", Ref, dotNetObjectRef);
             });
-        }
-
-        private void Value_OnChangeEvent(object sender, decimal e)
-        {
-            CurrentValue = SwitchT.FromDecimal(e);
         }
 
         public override void Dispose()
         {
             base.Dispose();
-            jsHelper.Dispose();
+            DisposeDotNetObjectRef(dotNetObjectRef);
         }
 
 
         [Parameter]
-        public TValue ValueMin { get; set; }
+        public decimal ValueMin { get; set; } = 0;
 
         [Parameter]
-        public TValue ValueMax { get; set; }
+        public decimal ValueMax { get; set; } = 100;
 
         [Parameter]
         public string Label { get; set; }
@@ -55,12 +51,45 @@ namespace MatBlazor
         public bool Discrete { get; set; }
 
         [Parameter]
-        public TValue Step { get; set; }
-        
-        [Parameter]
-        public bool EnableStep { get; set; }
+        [Obsolete("Freezed while bug in Blazor")]
+        public decimal Step { get; set; }
 
         [Parameter]
         public bool Disabled { get; set; }
+
+
+        [Parameter]
+        public decimal Value
+        {
+            get => _value;
+            set
+            {
+                if (value != _value)
+                {
+                    _value = value;
+                    ValueChanged.InvokeAsync(value);
+                }
+            }
+        }
+
+        [Parameter]
+        public EventCallback<decimal> ValueChanged { get; set; }
+
+        public class JsHelper
+        {
+            private BaseMatSlider _source;
+
+            public JsHelper(BaseMatSlider source)
+            {
+                _source = source;
+            }
+
+            [JSInvokable]
+            public decimal OnChangeHandler(decimal value)
+            {
+                _source.Value = value;
+                return value;
+            }
+        }
     }
 }

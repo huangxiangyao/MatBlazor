@@ -141,10 +141,12 @@
 </DemoContainer>
 
 <h5 class="mat-h5">Using a step value</h5>
-
+<b>Disabled due to an error in Blazor </b>
+<a href="https://github.com/aspnet/AspNetCore/issues/8704" target="_blank">Bug</a>
+@*
     <DemoContainer>
         <Content>
-            <MatSlider @bind-Value="@Val4" Step="5" EnableStep="true" ValueMin="0" ValueMax="100"></MatSlider>
+            <MatSlider @bind-Value="@Val4" Step="5"></MatSlider>
 
             @code
             {
@@ -165,7 +167,7 @@
         </Content>
         <SourceContent>
         	<BlazorFiddle Template="MatBlazor" Code=@(@"
-            <MatSlider @bind-Value=""@Val4"" Step=""5"" EnableStep=""true"" ValueMin=""0"" ValueMax=""100""></MatSlider>
+            <MatSlider @bind-Value=""@Val4"" Step=""5""></MatSlider>
 
             @code
             {
@@ -186,7 +188,7 @@
         ")></BlazorFiddle>
         </SourceContent>
 </DemoContainer>
-    
+    *@
 
 
 <h5 class="mat-h5">Disabled sliders</h5>
@@ -205,7 +207,7 @@
 <h5 class="mat-h5">ValueChanged event</h5>
 <DemoContainer>
     <Content>
-        <MatSlider TValue="decimal" ValueChanged="@OnValueChanged"></MatSlider>
+        <MatSlider ValueChanged="@OnValueChanged"></MatSlider>
 
         @code
         {
@@ -220,7 +222,7 @@
     </Content>
     <SourceContent>
     	<BlazorFiddle Template="MatBlazor" Code=@(@"
-        <MatSlider TValue=""decimal"" ValueChanged=""@OnValueChanged""></MatSlider>
+        <MatSlider ValueChanged=""@OnValueChanged""></MatSlider>
 
         @code
         {

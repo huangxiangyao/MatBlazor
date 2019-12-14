@@ -55,11 +55,6 @@ namespace MatBlazor
         [Parameter]
         public string SortByParamName { get; set; }
 
-        [Parameter]
-        public string PageLabel { get; set; } = "Page";
-
-        [Parameter]
-        public string PageRecordCountLabel { get; set; } = "Items per Page:";
 
         [Parameter]
         public string PagingDataPropertyName { get; set; }

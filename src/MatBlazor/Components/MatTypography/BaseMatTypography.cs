@@ -6,13 +6,6 @@ namespace MatBlazor
 {
     public abstract class BaseMatTypography : BaseMatContainerComponent
     {
-
-        [Parameter]
-        public bool Anchor { get; set; }
-        
-        [Parameter]
-        public string AnchorId { get; set; }
-
         protected BaseMatTypography(string tag, string className)
         {
             this.Tag = tag;

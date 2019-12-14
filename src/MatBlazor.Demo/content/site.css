@@ -1,7 +1,5 @@
 ﻿html, body { margin: 0px; }
 
-
-
 .article-table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -12,10 +10,6 @@
     border: 1px solid #eee;
     width: 100%
 }
-
-.article-table.article-table-same th, .article-table.article-table-same td { width: 33%; }
-
-.article-table.article-table-same { display: table; }
 
 
 .article-table th {
@@ -136,9 +130,4 @@
         -webkit-transform: scale3D(0, 0, 1);
         transform: scale3D(0, 0, 1);
     }
-}
-
-.blazor-fiddle {
-    white-space: nowrap;
-    overflow: auto;
 }
