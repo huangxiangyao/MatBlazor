@@ -39,7 +39,8 @@
             <div class="mdc-paginator">
                 <div class="mdc-paginator-container">
                     <div class="mdc-paginator-page-size">
-                        @PageRecordCountLabel
+                        Items per page:
+
                         <MatSelect @bind-Value="@PageSizeStr">
                             @if (PageSizes != null)
                             {
@@ -52,7 +53,7 @@
                     </div>
 
                     <div class="mdc-paginator-range-actions">
-                        <span class="mdc-paginator-range-label">@PageLabel @CurrentPage / @TotalPages</span>
+                        <span class="mdc-paginator-range-label">Page @CurrentPage of @TotalPages</span>
                         <div class="mdc-paginator-range-buttons">
                             <MatIconButton Icon="first_page" OnClick=@(async () => NavigateToPage(PageDirection.First)) Disabled=@(CurrentPage <= 1)></MatIconButton>
                             <MatIconButton Icon="navigate_before" OnClick=@(async () => NavigateToPage(PageDirection.Previous)) Disabled=@(CurrentPage <= 1)></MatIconButton>
@@ -125,8 +126,7 @@
                 new PageSizeStructure() {Text = "100", Value = 100},
                 new PageSizeStructure() {Text = "*", Value = -1}
                     };
-                    if(PageSize <= 0) 
-                        PageSize = 5;
+                    PageSize = 5;
                 }
                 CurrentPage = 1;
 

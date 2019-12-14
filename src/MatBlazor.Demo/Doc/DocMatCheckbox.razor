@@ -6,6 +6,8 @@
 
 @if (!Secondary) {<h3 class="mat-h3">MatCheckbox</h3> } else { <h5 class="mat-h5">MatCheckbox</h5> }
 
+<p>Checkboxes allow the user to select multiple options from a set.</p>
+
 <div><table class="article-table mat-elevation-z5">
 	<tr>
 		<th>Name</th>
@@ -15,7 +17,17 @@
 	<tr>
 		<td>Attributes</td>
 		<td>Dictionary&lt;String,Object&gt;</td>
-		<td>Gets or sets a collection of additional attributes that will be applied to the created element.</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Checked</td>
+		<td>Boolean</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>CheckedChanged</td>
+		<td>Action&lt;Boolean&gt;</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>ChildContent</td>
@@ -38,16 +50,6 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>Indeterminate</td>
-		<td>Boolean</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>InputValue</td>
-		<td>String</td>
-		<td></td>
-	</tr>
-	<tr>
 		<td>Label</td>
 		<td>String</td>
 		<td></td>
@@ -64,18 +66,8 @@
 	</tr>
 	<tr>
 		<td>Value</td>
-		<td>Boolean</td>
-		<td>Gets or sets the value of the input. This should be used with two-way binding.</td>
-	</tr>
-	<tr>
-		<td>ValueChanged</td>
-		<td>EventCallback&lt;Boolean&gt;</td>
-		<td>Gets or sets a callback that updates the bound value.</td>
-	</tr>
-	<tr>
-		<td>ValueExpression</td>
-		<td>Expression&lt;Func&lt;Boolean&gt;&gt;</td>
-		<td>Gets or sets an expression that identifies the bound value.</td>
+		<td>String</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>Ref</td>
