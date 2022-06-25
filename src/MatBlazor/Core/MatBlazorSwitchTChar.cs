@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace MatBlazor
 {
@@ -7,14 +6,34 @@ namespace MatBlazor
     {
         public override char Increase(char v, char step, char max)
         {
-            var v2 = (char) (v + step);
-            return v2 <= max ? v2 : max;
+            checked
+            {
+                try
+                {
+                    var v2 = (char) (v + step);
+                    return v2 <= max ? v2 : max;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
+            }
         }
 
         public override char Decrease(char v, char step, char min)
         {
-            var v2 = (char) (v - step);
-            return v2 >= min ? v2 : min;
+            checked
+            {
+                try
+                {
+                    var v2 = (char)(v - step);
+                    return v2 >= min ? v2 : min;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
+            }
         }
 
         public override char Round(char v, int dp)
@@ -22,10 +41,10 @@ namespace MatBlazor
             return v;
         }
 
-        public override char Minimum => char.MinValue;
-        public override char Maximum => char.MaxValue;
+        public override char GetMinimum() => char.MinValue;
+        public override char GetMaximum() => char.MaxValue;
 
-        public override char Step => (char)1;
+        public override char GetStep() => (char)1;
 
         public override string FormatValueAsString(char v, string format)
         {
@@ -54,7 +73,7 @@ namespace MatBlazor
 
         public override char FromDecimal(decimal v)
         {
-            return (char) v;
+            return (char)v;
         }
     }
 }

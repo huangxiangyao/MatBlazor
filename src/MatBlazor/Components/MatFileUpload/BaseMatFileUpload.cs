@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatBlazor
 {
     public class BaseMatFileUpload : BaseMatDomComponent
     {
-
         protected ElementReference InputRef;
 
         [Parameter]
-        public EventCallback<IMatFileEntry[]> OnChange { get; set; }
+        public EventCallback<IMatFileUploadEntry[]> OnChange { get; set; }
+
+        [Parameter]
+        public bool AllowMultiple { get; set; } = false; 
 
         [Parameter]
         public string Label { get; set; } = "Drop files here or Browse";
@@ -23,10 +24,34 @@ namespace MatBlazor
         public int MaxMessageSize { get; set; } = 20 * 1024; // TODO: Use SignalR default
 
         [Parameter]
-        public int MaxBufferSize { get; set; } = 1024 * 1024;
+        public int MaxMessageLength { get; set; } = 3;
+
+        private readonly MatDotNetObjectReference<BaseMatFileUpload> jsHelper;
 
 
-        MatDotNetObjectReference<BaseMatFileUpload> jsHelper;
+        protected long ProgressProgress;
+        protected long ProgressBuffer;
+        protected long ProgressTotal;
+        protected double Progress;
+
+
+        public async Task UpdateProgressAsync(long progressProgress, long progressBuffer, long progressTotal)
+        {
+            // return;
+            await InvokeAsync(() =>
+            {
+                ProgressProgress += progressProgress;
+                ProgressBuffer += progressBuffer;
+                ProgressTotal += progressTotal;
+                var progress = Math.Round((double) ProgressProgress / ProgressTotal, 3);
+                if (Math.Abs(progress - Progress) > double.Epsilon)
+                {
+                    // Console.WriteLine($"Progress\t{progress}\t{ProgressProgress}\t{ProgressBuffer}\t{ProgressTotal}");
+                    Progress = progress;
+                    this.StateHasChanged();
+                }
+            });
+        }
 
         public BaseMatFileUpload()
         {
@@ -38,12 +63,11 @@ namespace MatBlazor
 
 
         [JSInvokable]
-        public Task NotifyChange(MatFileEntry[] files)
+        public Task NotifyChange(MatFileUploadEntry[] files)
         {
             foreach (var file in files)
             {
-                // So that method invocations on the file can be dispatched back here
-                file.Owner = (BaseMatFileUpload) (object) this;
+                file.Init(this);
             }
 
             return OnChange.InvokeAsync(files);
@@ -57,17 +81,23 @@ namespace MatBlazor
             }
         }
 
-        internal Stream OpenFileStream(MatFileEntry matFile)
-        {
-            return SharedMemoryFileListEntryStream.IsSupported(Js)
-                ? (Stream) new SharedMemoryFileListEntryStream(Js, InputRef, matFile)
-                : new RemoteFileListEntryStream(Js, InputRef, matFile, MaxMessageSize, MaxBufferSize);
-        }
+        // internal async Task<Stream> ReadAsStreamAsync(MatFileUploadEntry entry)
+        // {
+        //     // SharedMemoryMatBlazorStream.IsSupported(Js)
+        //     // ? (BaseMatBlazorStream)new SharedMemoryMatBlazorStream(Js, InputRef, entry)
+        //     
+        // }
 
         public override void Dispose()
         {
             base.Dispose();
             jsHelper?.Dispose();
+        }
+
+        public async Task WriteToStreamAsync(MatFileUploadEntry matFileUploadEntry, Stream stream)
+        {
+            await new MatBlazorRemoteStreamReader(Js, Ref, matFileUploadEntry, MaxMessageSize, MaxMessageLength, this)
+                .WriteToStreamAsync(stream, CancellationToken.None);
         }
     }
 }

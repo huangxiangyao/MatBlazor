@@ -4,9 +4,11 @@
 @* ALL MANUAL CHANGES WILL BE REMOVED! *@
 
 
-@if (!Secondary) {<h3 class="mat-h3">MatInputTextComponent</h3> } else { <h5 class="mat-h5">MatInputTextComponent</h5> }
+@if (!Secondary) {<h3 class="mat-h3">@Header</h3> } else { <h5 class="mat-h5">@Header</h5> }
 
-<div><table class="article-table mat-elevation-z5">
+<p>Base class for any input control that optionally supports an .</p>
+
+<div><table class="article-table mat-elevation-z5 mdc-theme--surface">
 	<tr>
 		<th>Name</th>
 		<th>Type</th>
@@ -15,7 +17,7 @@
 	<tr>
 		<td style="font-weight: bold;">T</td>
 		<td>Generic argument</td>
-		<td></td>
+		<td>the natural type of the input&#39;s value</td>
 	</tr>
 	<tr>
 		<td>Attributes</td>
@@ -95,6 +97,11 @@
 	<tr>
 		<td>Id</td>
 		<td>String</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>InputAttributes</td>
+		<td>IDictionary&lt;String,Object&gt;</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -183,6 +190,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>ValidationDisabled</td>
+		<td>Boolean</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>Value</td>
 		<td>T</td>
 		<td>Gets or sets the value of the input. This should be used with two-way binding.</td>
@@ -203,3 +215,12 @@
 		<td>Returned ElementRef reference for DOM element.</td>
 	</tr>
 </table></div>
+
+
+@code
+{
+
+	[Parameter]
+	public string Header { get; set; } = "MatInputTextComponent";
+
+}

@@ -7,14 +7,34 @@ namespace MatBlazor
     {
         public override long Increase(long v, long step, long max)
         {
-            var v2 = (long) (v + step);
-            return v2 <= max ? v2 : max;
+            checked
+            {
+                try
+                {
+                    var v2 = (long) (v + step);
+                    return v2 <= max ? v2 : max;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
+            }
         }
 
         public override long Decrease(long v, long step, long min)
         {
-            var v2 = (long) (v - step);
-            return v2 >= min ? v2 : min;
+            checked
+            {
+                try
+                {
+                    var v2 = (long) (v - step);
+                    return v2 >= min ? v2 : min;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
+            }
         }
 
         public override long Round(long v, int dp)
@@ -22,10 +42,10 @@ namespace MatBlazor
             return v;
         }
 
-        public override long Minimum => long.MinValue;
-        public override long Maximum => long.MaxValue;
+        public override long GetMinimum() => long.MinValue;
+        public override long GetMaximum() => long.MaxValue;
 
-        public override long Step => 1;
+        public override long GetStep() => 1;
 
         public override string FormatValueAsString(long v, string format)
         {

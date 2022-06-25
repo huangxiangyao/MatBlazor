@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -18,12 +16,16 @@ namespace MatBlazor
         protected MatBlazorSwitchT<T> SwitchT = MatBlazorSwitchT<T>.Get();
 
         protected Type _nullableUnderlyingType;
+        private T _value;
 
         protected BaseMatInputComponent()
         {
         }
 
-       
+        [Parameter]
+        public bool ValidationDisabled { get; set; }
+
+
         [CascadingParameter]
         EditContext CascadedEditContext { get; set; }
 
@@ -34,7 +36,30 @@ namespace MatBlazor
         /// @bind-Value="model.PropertyName"
         /// </example>
         [Parameter]
-        public T Value { get; set; }
+        public T Value
+        {
+            get => _value;
+            set
+            {
+                var hasChanged = !EqualityComparer<T>.Default.Equals(_value, value);
+                if (hasChanged)
+                {
+                    var oldValue = _value;
+                    _value = value;
+                    OnValueChanged(oldValue, _value);
+                }
+                OnValueChanged(hasChanged);
+            }
+        }
+
+        [Obsolete("Please use OnValueChanged(oldValue, newValue)")]
+        protected virtual void OnValueChanged(bool changed)
+        {
+        }
+
+        protected virtual void OnValueChanged(T oldValue, T newValue)
+        {
+        }
 
         /// <summary>
         /// Gets or sets a callback that updates the bound value.
@@ -63,13 +88,13 @@ namespace MatBlazor
         /// </summary>
         protected virtual T CurrentValue
         {
-            get => Value;
+            get => _value;
             set
             {
                 var hasChanged = !EqualityComparer<T>.Default.Equals(value, Value);
-                if (hasChanged)
+                if (hasChanged && ValidateCurrentValue(value))
                 {
-                    Value = value;
+                    _value = value;
                     ValueChanged.InvokeAsync(value);
                     EditContext?.NotifyFieldChanged(FieldIdentifier);
                 }
@@ -77,8 +102,11 @@ namespace MatBlazor
         }
 
 
-      
-        
+        protected virtual bool ValidateCurrentValue(T value)
+        {
+            return true;
+        }
+
 
         /// <summary>
         /// Gets a string that indicates the status of the field being edited. This will include
@@ -92,33 +120,38 @@ namespace MatBlazor
         {
             parameters.SetParameterProperties(this);
 
-            if (EditContext == null)
-            {
-                // This is the first run
-                // Could put this logic in OnInit, but its nice to avoid forcing people who override OnInit to call base.OnInit()
 
-                if (CascadedEditContext != null)
+            if (!ValidationDisabled)
+            {
+                if (EditContext == null)
                 {
-                    if (ValueExpression == null)
+                    // This is the first run
+                    // Could put this logic in OnInit, but its nice to avoid forcing people who override OnInit to call base.OnInit()
+
+                    if (CascadedEditContext != null)
                     {
-                        throw new InvalidOperationException($"{GetType()} requires a value for the 'ValueExpression' " +
-                                                            $"parameter. Normally this is provided automatically when using 'bind-Value'.");
+                        if (ValueExpression == null)
+                        {
+                            throw new InvalidOperationException(
+                                $"{GetType()} requires a value for the 'ValueExpression' " +
+                                $"parameter. Normally this is provided automatically when using 'bind-Value'.");
+                        }
+
+                        EditContext = CascadedEditContext;
+                        FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+                        _nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(T));
                     }
-
-                    EditContext = CascadedEditContext;
-                    FieldIdentifier = FieldIdentifier.Create(ValueExpression);
-                    _nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(T));
                 }
-            }
-            else if (CascadedEditContext != EditContext)
-            {
-                // Not the first run
+                else if (CascadedEditContext != EditContext)
+                {
+                    // Not the first run
 
-                // We don't support changing EditContext because it's messy to be clearing up state and event
-                // handlers for the previous one, and there's no strong use case. If a strong use case
-                // emerges, we can consider changing this.
-                throw new InvalidOperationException($"{GetType()} does not support changing the " +
-                                                    $"{nameof(EditContext)} dynamically.");
+                    // We don't support changing EditContext because it's messy to be clearing up state and event
+                    // handlers for the previous one, and there's no strong use case. If a strong use case
+                    // emerges, we can consider changing this.
+                    throw new InvalidOperationException($"{GetType()} does not support changing the " +
+                                                        $"{nameof(EditContext)} dynamically.");
+                }
             }
 
             // For derived components, retain the usual lifecycle with OnInit/OnParametersSet/etc.

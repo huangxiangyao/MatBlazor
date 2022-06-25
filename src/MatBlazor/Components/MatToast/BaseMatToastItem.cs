@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System;
+using System.Threading.Tasks;
 
 
 namespace MatBlazor
@@ -36,8 +36,14 @@ namespace MatBlazor
 
         public void MouseLeave()
         {
-            if (State == MatToastState.Hiding) return;
-            if (Toast.Options.RequireInteraction && !UserHasInteracted) return;
+            if (State == MatToastState.Hiding)
+            {
+                return;
+            }
+            if (Toast.Options.RequireInteraction && !UserHasInteracted)
+            {
+                return;
+            }
             TransitionTo(MatToastState.Hiding);
         }
 
@@ -45,17 +51,23 @@ namespace MatBlazor
         {
             Toast.Options.Onclick?.Invoke(Toast);
 
-            if (fromCloseIcon || !Toast.Options.ShowCloseButton)
-            {
-                UserHasInteracted = true;
-                TransitionTo(MatToastState.Hiding);
-            }
+            if (!fromCloseIcon && Toast.Options.ShowCloseButton) 
+                return;
+            
+            UserHasInteracted = true;
+            TransitionTo(MatToastState.Hiding);
         }
 
         public void EnsureInitialized()
         {
-            if (State == MatToastState.Init) TransitionTo(MatToastState.Showing);
-            else UpdateTransitionState();
+            if (State == MatToastState.Init)
+            {
+                TransitionTo(MatToastState.Showing);
+            }
+            else
+            {
+                UpdateTransitionState();
+            }
         }
 
 
@@ -78,8 +90,11 @@ namespace MatBlazor
 
                         Css = builder =>
                         {
-                            var transitionClass = TransitionClass;
-                            if (string.IsNullOrEmpty(transitionClass)) return;
+                            string transitionClass = TransitionClass;
+                            if (string.IsNullOrEmpty(transitionClass))
+                            {
+                                return;
+                            }
 
                             builder.OpenElement(1, "style");
                             builder.AddContent(2, transitionClass);
@@ -119,8 +134,7 @@ namespace MatBlazor
         [Parameter]
         public MatToastType Type { get; set; }
 
-
-        string AnimationId = IdGeneratorHelper.Generate("mat_toaster_animation_");
+        private readonly string _animationId = IdGeneratorHelper.Generate("mat_toaster_animation_");
 
         private MatToastTransitionState TransitionState { get; set; }
 
@@ -131,14 +145,14 @@ namespace MatBlazor
                 switch (State)
                 {
                     case MatToastState.Showing:
-                        var opacity = Toast.Options.MaximumOpacity;
-                        var showDuration = Toast.Options.ShowTransitionDuration;
-                        return $"opacity: {opacity}; animation: {showDuration}ms linear {AnimationId};";
+                        int opacity = Toast.Options.MaximumOpacity;
+                        int showDuration = Toast.Options.ShowTransitionDuration;
+                        return $"opacity: {opacity}; animation: {showDuration}ms linear {_animationId};";
                     case MatToastState.Visible:
                         return $"opacity: {TransitionState.Opacity};";
                     case MatToastState.Hiding:
-                        var hideDuration = Toast.Options.HideTransitionDuration;
-                        return $"opacity: 0; animation: {hideDuration}ms linear {AnimationId};";
+                        int hideDuration = Toast.Options.HideTransitionDuration;
+                        return $"opacity: 0; animation: {hideDuration}ms linear {_animationId};";
                     default:
                         return string.Empty;
                 }
@@ -150,9 +164,9 @@ namespace MatBlazor
         {
             get
             {
-                var percentage = TransitionState.ProgressPercentage;
-                var milliseconds = TransitionState.RemainingMilliseconds;
-                return $"width: {percentage}; animation: {AnimationId} {milliseconds}ms;";
+                string percentage = TransitionState.ProgressPercentage;
+                int milliseconds = TransitionState.RemainingMilliseconds;
+                return $"width: {percentage}; animation: {_animationId} {milliseconds}ms;";
             }
         }
 
@@ -167,19 +181,15 @@ namespace MatBlazor
         {
             get
             {
-                var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
+                string template = "@keyframes " + _animationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
 
-                switch (State)
+                return State switch
                 {
-                    case MatToastState.Showing:
-                        return string.Format(template, "opacity", 0, TransitionState.Opacity);
-                    case MatToastState.Hiding:
-                        return string.Format(template, "opacity", TransitionState.Opacity, 0);
-                    case MatToastState.Visible:
-                        return string.Format(template, "width", $"{TransitionState.ProgressPercentage}%", "0%");
-                    default:
-                        return string.Empty;
-                }
+                    MatToastState.Showing => string.Format(template, "opacity", 0, TransitionState.Opacity),
+                    MatToastState.Hiding => string.Format(template, "opacity", TransitionState.Opacity, 0),
+                    MatToastState.Visible => string.Format(template, "width", $"{TransitionState.ProgressPercentage}%", "0%"),
+                    _ => string.Empty,
+                };
             }
         }
 
@@ -203,8 +213,14 @@ namespace MatBlazor
             switch (state)
             {
                 case MatToastState.Showing:
-                    if (Toast.Options.ShowTransitionDuration <= 0) TransitionTo(MatToastState.Visible);
-                    else Timer.Start(Toast.Options.ShowTransitionDuration);
+                    if (Toast.Options.ShowTransitionDuration <= 0)
+                    {
+                        TransitionTo(MatToastState.Visible);
+                    }
+                    else
+                    {
+                        Timer.Start(Toast.Options.ShowTransitionDuration);
+                    }
                     break;
                 case MatToastState.Visible:
                     if (Toast.Options.RequireInteraction)
@@ -213,9 +229,14 @@ namespace MatBlazor
                         Toast.InvokeOnUpdate();
                         return;
                     }
-                    else if (Toast.Options.VisibleStateDuration < 0) TransitionTo(MatToastState.Hiding);
-                    else Timer.Start(Toast.Options.VisibleStateDuration);
-
+                    else if (Toast.Options.VisibleStateDuration < 0)
+                    {
+                        TransitionTo(MatToastState.Hiding);
+                    }
+                    else
+                    {
+                        Timer.Start(Toast.Options.VisibleStateDuration);
+                    }
                     break;
                 case MatToastState.Hiding:
                     if (Toast.Options.HideTransitionDuration <= 0)
@@ -223,8 +244,10 @@ namespace MatBlazor
                         Toast.InvokeOnClose();
                         return;
                     }
-                    else Timer.Start(Toast.Options.HideTransitionDuration);
-
+                    else
+                    {
+                        Timer.Start(Toast.Options.HideTransitionDuration);
+                    }
                     break;
                 case MatToastState.MouseOver:
                     break;

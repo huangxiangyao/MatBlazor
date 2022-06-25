@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MatBlazor
+﻿namespace MatBlazor
 {
-    public class MatCheckbox : MatCheckboxType<bool>
+    public class MatCheckbox<TValue> : MatCheckboxInternal<TValue>
     {
     }
 }

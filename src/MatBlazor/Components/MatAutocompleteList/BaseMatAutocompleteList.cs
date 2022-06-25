@@ -1,9 +1,10 @@
-﻿using System;
+﻿using MatBlazor.Components.MatAutocompleteList;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace MatBlazor
 {
@@ -17,20 +18,35 @@ namespace MatBlazor
         private bool isOpened;
         private string stringValue;
         private TItem _value;
-
+        private AutocompleteListSearchResult<TItem> searchResult;
         public MatList ListRef;
 
         protected IEnumerable<MatAutocompleteListItem<TItem>> GetFilteredCollection(string searchText)
         {
-            return Items.Select(x => new MatAutocompleteListItem<TItem>()
+            if (searchResult == null || searchResult.SearchText != searchText || searchResult.Items != Items)
             {
-                StringValue = ComputeStringValue(x),
-                Item = x
-            })
-                .Where(x => x != null &&
-                            (string.IsNullOrEmpty(searchText) || x.StringValue.ToLowerInvariant()
-                                 .Contains(searchText.ToLowerInvariant())))
-                .Take(NumberOfElementsInPopup ?? DefaultsElementsInPopup);
+                searchResult = new AutocompleteListSearchResult<TItem>()
+                {
+                    SearchText = searchText,
+                    //  deepcode ignore CSharpSelfAssignment: <Property is set for new AutocompleteListSearchResult>
+                    Items = Items,
+                    ListResult = Items.Select(x => new MatAutocompleteListItem<TItem>()
+                    {
+                        StringValue = ComputeStringValue(x),
+                        Item = x
+                    })
+                        .Where
+                        (
+                            x => x != null
+                                 && (string.IsNullOrEmpty(searchText)
+                                     || x.StringValue.ToLowerInvariant().Contains(searchText.ToLowerInvariant())
+                                     )
+                                 )
+                        .Take(NumberOfElementsInPopup ?? DefaultsElementsInPopup)
+                        .ToList()
+                };
+            }
+            return searchResult.ListResult;
         }
 
         protected bool IsShowingClearButton
@@ -40,12 +56,12 @@ namespace MatBlazor
 
         public bool IsOpened
         {
-            get { return isOpened; }
-            set
+            get => isOpened;
+            private set
             {
                 isOpened = value;
                 OnOpenedChanged.InvokeAsync(value);
-                this.StateHasChanged();
+                StateHasChanged();
             }
         }
 
@@ -73,7 +89,7 @@ namespace MatBlazor
         [Parameter]
         public string StringValue
         {
-            get { return stringValue; }
+            get => stringValue;
             set
             {
                 stringValue = value;
@@ -87,16 +103,24 @@ namespace MatBlazor
         [Parameter]
         public TItem Value
         {
-            get { return _value; }
+            get => _value;
             set
             {
+                if (!EqualValues(value, default))
+                {
+                    string newValue = ComputeStringValue(value);
+                    if (newValue != StringValue)
+                    {
+                        StringValue = newValue;
+                    }
+                }
+
                 if (EqualValues(value, _value))
                 {
                     return;
                 }
 
                 _value = value;
-                StringValue = EqualValues(Value, default(TItem)) ? string.Empty : ComputeStringValue(Value);
                 ValueChanged.InvokeAsync(_value);
             }
         }
@@ -167,6 +191,11 @@ namespace MatBlazor
 
         protected void ClosePopup()
         {
+            if (StringValue != ComputeStringValue(Value))
+            {
+                _value = default;
+                ValueChanged.InvokeAsync(_value);
+            }
             IsOpened = false;
         }
 
@@ -176,27 +205,62 @@ namespace MatBlazor
             StateHasChanged();
         }
 
-        public async void OnKeyDown(KeyboardEventArgs ev)
+        public async Task OnKeyDown(KeyboardEventArgs ev)
         {
-            if (ev.Key == "ArrowDown" || ev.Key == "ArrowUp")
+            if (ev.Key == null ||   // Google auto-fill sends null key
+                ev.Key == "Tab")    // user navigates to next field
             {
-                int currentIndex = await ListRef.GetSelectedIndex();
-                int nextIndex = (ev.Key == "ArrowDown") ? currentIndex++ : currentIndex--;
+                return;
+            }
+            int currentIndex = await ListRef.GetSelectedIndex();
+            bool wasCurrentIndexChanged = false;
+
+            if (currentIndex < 0)
+            {
+                currentIndex = 0;
+                wasCurrentIndexChanged = true;
+            }
+
+            if (searchResult != null && searchResult.ListResult.Count > 0 && currentIndex > searchResult.ListResult.Count)
+            {
+                currentIndex = searchResult.ListResult.Count - 1;
+                wasCurrentIndexChanged = true;
+            }
+
+            switch (ev.Key)
+            {
+                case "ArrowDown":
+                    currentIndex++;
+                    wasCurrentIndexChanged = true;
+                    break;
+                case "ArrowUp":
+                    currentIndex--;
+                    wasCurrentIndexChanged = true;
+                    break;
+            }
+
+            if (wasCurrentIndexChanged)
+            {
                 await ListRef.SetSelectedIndex(currentIndex);
             }
-            else if (ev.Key == "Enter")
+
+            if (ev.Key == "Enter" && searchResult != null && currentIndex >= 0 && currentIndex < searchResult.ListResult.Count)
             {
-                await JsInvokeAsync<object>("matBlazor.matList.confirmSelection", ListRef.Ref);
+                ItemSelected(searchResult.ListResult[currentIndex].Item);
             }
         }
 
-        public void ItemClicked(TItem selectedObject)
+        public void ItemSelected(TItem selectedObject)
         {
             Value = selectedObject;
             StateHasChanged();
         }
 
-        public void ClearText(MouseEventArgs e)
+        /// <summary>
+        /// Clears current value of the autocomplete text
+        /// </summary>
+        /// <param name="e"></param>
+        public void ClearText(EventArgs e)
         {
             Value = default;
             StringValue = string.Empty;
@@ -217,11 +281,5 @@ namespace MatBlazor
         {
             return CustomStringSelector?.Invoke(obj) ?? obj?.ToString();
         }
-
-//        protected async override Task OnFirstAfterRenderAsync()
-//        {
-//            await base.OnFirstAfterRenderAsync();
-//            await JsInvokeAsync<object>("matBlazor.matAutocomplete.init", Ref);
-//        }
     }
 }

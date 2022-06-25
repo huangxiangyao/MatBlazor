@@ -7,12 +7,34 @@ namespace MatBlazor
     {
         public override float Increase(float v, float step, float max)
         {
-            return Math.Min(v + step, max);
+            checked
+            {
+                try
+                {
+                    var v2 = (float) (v + step);
+                    return v2 <= max ? v2 : max;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
+            }
         }
 
         public override float Decrease(float v, float step, float min)
         {
-            return Math.Max(v - step, min);
+            checked
+            {
+                try
+                {
+                    var v2 = (float)(v - step);
+                    return v2 >= min ? v2 : min;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
+            }
         }
 
         public override float Round(float v, int dp)
@@ -20,10 +42,10 @@ namespace MatBlazor
             return (float)Math.Round(v, dp);
         }
 
-        public override float Minimum => float.MinValue;
-        public override float Maximum => float.MaxValue;
+        public override float GetMinimum() => float.MinValue;
+        public override float GetMaximum() => float.MaxValue;
 
-        public override float Step => 1;
+        public override float GetStep() => 1;
 
         public override string FormatValueAsString(float v, string format)
         {

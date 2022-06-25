@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Components.RenderTree;
 
 namespace MatBlazor
 {
@@ -30,11 +29,11 @@ namespace MatBlazor
             return v;
         }
 
-        public override bool? Minimum => null;
+        public override bool? GetMinimum() => null;
 
-        public override bool? Maximum => null;
+        public override bool? GetMaximum() => null;
 
-        public override bool? Step => true;
+        public override bool? GetStep() => true;
 
         public override string FormatValueAsString(bool? v, string format)
         {

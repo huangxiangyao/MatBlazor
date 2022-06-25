@@ -1,6 +1,4 @@
-import './matDialog.scss';
-
-import { MDCDialog } from '@material/dialog';
+import {MDCDialog} from '@material/dialog';
 
 
 export function init(ref, component) {
@@ -26,10 +24,10 @@ export function setIsOpen(ref, v) {
 
 export function setCanBeClosed(ref, v) {
   if (v) {
-    ref.matBlazorRef.escapeKeyAction = "close";
-    ref.matBlazorRef.scrimClickAction = "close";
+    ref.matBlazorRef.escapeKeyAction = 'close';
+    ref.matBlazorRef.scrimClickAction = 'close';
   } else {
-    ref.matBlazorRef.escapeKeyAction = "";
-    ref.matBlazorRef.scrimClickAction = "";
+    ref.matBlazorRef.escapeKeyAction = '';
+    ref.matBlazorRef.scrimClickAction = '';
   }
 }

@@ -1,14 +1,13 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace MatBlazor
 {
     /// <summary>
-    /// Component for on/off control that can be toggled via clicking or dragging.
+    /// Material Design SlideToggle for Blazor. Component for on/off control that can be toggled via clicking or dragging.
     /// </summary>
+    /// <typeparam name="TValue">bool, bool?</typeparam>
     public class BaseMatSlideToggle<TValue> : BaseMatInputElementComponent<TValue>
     {
-
         protected bool Checked => SwitchT.ToBool(CurrentValue);
 
         public BaseMatSlideToggle()

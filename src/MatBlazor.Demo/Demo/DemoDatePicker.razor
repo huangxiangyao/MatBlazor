@@ -72,6 +72,15 @@
 
         <p><b>EnableTime</b></p>
         <MatDatePicker @bind-Value="FeaturesDateTime" EnableTime="true"></MatDatePicker>
+
+        <p><b>Minimum</b></p>
+        <MatDatePicker @bind-Value="FeaturesDateTime" Minimum="@DateTime.Now.AddDays(-10)"></MatDatePicker>
+
+        <p><b>Maximum</b></p>
+        <MatDatePicker @bind-Value="FeaturesDateTime" Maximum="@DateTime.Now.AddDays(10)"></MatDatePicker>
+
+        <p><b>Minimum and Maximum</b></p>
+        <MatDatePicker @bind-Value="FeaturesDateTime" Minimum="@DateTime.Now.AddDays(-10)" Maximum="@DateTime.Now.AddDays(10)"></MatDatePicker>
         
         <p><b>EnableSeconds</b></p>
         <MatDatePicker @bind-Value="FeaturesDateTime" EnableTime="true" EnableSeconds="true"></MatDatePicker>
@@ -82,7 +91,7 @@
         <p><b>EnableWeekNumbers</b></p>
         <MatDatePicker @bind-Value="FeaturesDateTime" EnableWeekNumbers="true"></MatDatePicker>
         
-        <p><b>EnableWeekNumbers</b></p>
+        <p><b>DisableMobile</b></p>
         <MatDatePicker @bind-Value="FeaturesDateTime" DisableMobile="true"></MatDatePicker>
         
         <p><b>DisableCalendar</b></p>
@@ -113,6 +122,15 @@
 
         <p><b>EnableTime</b></p>
         <MatDatePicker @bind-Value=""FeaturesDateTime"" EnableTime=""true""></MatDatePicker>
+
+        <p><b>Minimum</b></p>
+        <MatDatePicker @bind-Value=""FeaturesDateTime"" Minimum=""@DateTime.Now.AddDays(-10)""></MatDatePicker>
+
+        <p><b>Maximum</b></p>
+        <MatDatePicker @bind-Value=""FeaturesDateTime"" Maximum=""@DateTime.Now.AddDays(10)""></MatDatePicker>
+
+        <p><b>Minimum and Maximum</b></p>
+        <MatDatePicker @bind-Value=""FeaturesDateTime"" Minimum=""@DateTime.Now.AddDays(-10)"" Maximum=""@DateTime.Now.AddDays(10)""></MatDatePicker>
         
         <p><b>EnableSeconds</b></p>
         <MatDatePicker @bind-Value=""FeaturesDateTime"" EnableTime=""true"" EnableSeconds=""true""></MatDatePicker>
@@ -123,7 +141,7 @@
         <p><b>EnableWeekNumbers</b></p>
         <MatDatePicker @bind-Value=""FeaturesDateTime"" EnableWeekNumbers=""true""></MatDatePicker>
         
-        <p><b>EnableWeekNumbers</b></p>
+        <p><b>DisableMobile</b></p>
         <MatDatePicker @bind-Value=""FeaturesDateTime"" DisableMobile=""true""></MatDatePicker>
         
         <p><b>DisableCalendar</b></p>
@@ -151,10 +169,10 @@
 <DemoContainer>
     <Content>
         <p>
-            <MatDatePickerType @bind-Value="@DateTimeTest"></MatDatePickerType>
+            <MatDatePicker @bind-Value="@DateTimeTest"></MatDatePicker>
         </p>
         <p>
-            <MatDatePickerType @bind-Value="@DateTimeNullableTest"></MatDatePickerType>
+            <MatDatePicker @bind-Value="@DateTimeNullableTest"></MatDatePicker>
         </p>
 
         <span>@(DateTimeTest.ToLocalTime().ToString())</span>
@@ -170,10 +188,10 @@
     <SourceContent>
     	<BlazorFiddle Template="MatBlazor" Code=@(@"
         <p>
-            <MatDatePickerType @bind-Value=""@DateTimeTest""></MatDatePickerType>
+            <MatDatePicker @bind-Value=""@DateTimeTest""></MatDatePicker>
         </p>
         <p>
-            <MatDatePickerType @bind-Value=""@DateTimeNullableTest""></MatDatePickerType>
+            <MatDatePicker @bind-Value=""@DateTimeNullableTest""></MatDatePicker>
         </p>
 
         <span>@(DateTimeTest.ToLocalTime().ToString())</span>
@@ -195,37 +213,37 @@
 <DemoContainer>
     <Content>
         <p>
-            <MatDatePicker Label="With Label"></MatDatePicker>
+            <MatDatePicker Label="With Label" TValue="DateTime"></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label="Dense" Dense="true"></MatDatePicker>
+            <MatDatePicker Label="Dense" Dense="true" TValue="DateTime"></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label="Outlined" Outlined="true"></MatDatePicker>
+            <MatDatePicker Label="Outlined" Outlined="true" TValue="DateTime"></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label="Required" Required="true"></MatDatePicker>
+            <MatDatePicker Label="Required" Required="true" TValue="DateTime"></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label="Disabled" Disabled="true"></MatDatePicker>
+            <MatDatePicker Label="Disabled" Disabled="true" TValue="DateTime"></MatDatePicker>
         </p>
     </Content>
     <SourceContent>
     	<BlazorFiddle Template="MatBlazor" Code=@(@"
         <p>
-            <MatDatePicker Label=""With Label""></MatDatePicker>
+            <MatDatePicker Label=""With Label"" TValue=""DateTime""></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label=""Dense"" Dense=""true""></MatDatePicker>
+            <MatDatePicker Label=""Dense"" Dense=""true"" TValue=""DateTime""></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label=""Outlined"" Outlined=""true""></MatDatePicker>
+            <MatDatePicker Label=""Outlined"" Outlined=""true"" TValue=""DateTime""></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label=""Required"" Required=""true""></MatDatePicker>
+            <MatDatePicker Label=""Required"" Required=""true"" TValue=""DateTime""></MatDatePicker>
         </p>
         <p>
-            <MatDatePicker Label=""Disabled"" Disabled=""true""></MatDatePicker>
+            <MatDatePicker Label=""Disabled"" Disabled=""true"" TValue=""DateTime""></MatDatePicker>
         </p>
     ")></BlazorFiddle>
     </SourceContent>

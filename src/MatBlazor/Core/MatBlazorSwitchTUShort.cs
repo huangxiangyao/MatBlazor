@@ -7,14 +7,34 @@ namespace MatBlazor
     {
         public override ushort Increase(ushort v, ushort step, ushort max)
         {
-            var v2 = (ushort) (v + step);
-            return v2 <= max ? v2 : max;
+            checked
+            {
+                try
+                {
+                    var v2 = (ushort) (v + step);
+                    return v2 <= max ? v2 : max;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
+            }
         }
 
         public override ushort Decrease(ushort v, ushort step, ushort min)
         {
-            var v2 = (ushort) (v - step);
-            return v2 >= min ? v2 : min;
+            checked
+            {
+                try
+                {
+                    var v2 = (ushort) (v - step);
+                    return v2 >= min ? v2 : min;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
+            }
         }
 
         public override ushort Round(ushort v, int dp)
@@ -22,10 +42,10 @@ namespace MatBlazor
             return v;
         }
 
-        public override ushort Minimum => ushort.MinValue;
-        public override ushort Maximum => ushort.MaxValue;
+        public override ushort GetMinimum() => ushort.MinValue;
+        public override ushort GetMaximum() => ushort.MaxValue;
 
-        public override ushort Step => 1;
+        public override ushort GetStep() => 1;
 
         public override string FormatValueAsString(ushort v, string format)
         {

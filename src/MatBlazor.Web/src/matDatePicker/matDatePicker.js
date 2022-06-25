@@ -1,8 +1,5 @@
-import './matDatePicker.scss';
-
 import flatpickr from 'flatpickr';
 import {getMatBlazorInstance, setMatBlazorInstance} from '../utils/base';
-
 
 // export function init(ref, flatpickrInputRef, cmp, options) {
 //
@@ -26,17 +23,20 @@ export function open(ref, flatpickrInputRef, cmp, options) {
     mode: options.mode,
     position: options.position,
     positionElement: ref,
+    minDate: options.minimum,
+    maxDate: options.maximum,
+    defaultDate: options.value,
+    locale: options.locale,
     onChange: function (value) {
       // console.log("onChange", value)
       cmp.invokeMethodAsync('MatDatePickerOnChangeHandler', value);
     },
     onClose: function () {
-      setTimeout(()=>{
+      setTimeout(() => {
         self.flatpickr.destroy();
       });
     }
   });
-
 
   // var self = getMatBlazorInstance(ref);
   // self.flatpickr.setDate(value);
@@ -79,7 +79,6 @@ export function open(ref, flatpickrInputRef, cmp, options) {
 //     }
 //   });
 
-
 // ref.$iconRef = iconRef;
 
 // ref.addEventListener('focus', (i) => {
@@ -87,5 +86,3 @@ export function open(ref, flatpickrInputRef, cmp, options) {
 //   ref.$flatpickr.close();
 // });
 // }
-
-

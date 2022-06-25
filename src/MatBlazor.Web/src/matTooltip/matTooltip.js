@@ -1,6 +1,3 @@
-import * as styles from './matTooltip.scss';
-
-
 export const matTooltipRefKey = '$matBlazor.matTooltipRef';
 export const matTooltipTargetRefKey = '$matBlazor.matTooltipTargetRef';
 
@@ -77,13 +74,13 @@ class MatTooltip {
       }
 
       case TooltipPosition.bottom: {
-        xy.x = targetOffsset.left + (this.targetRef.offsetWidth / 2) - (this.ref.offsetWidth / 2);
+        xy.x = Math.max(0, targetOffsset.left + (this.targetRef.offsetWidth / 2) - (this.ref.offsetWidth / 2));
         xy.y = targetOffsset.top + this.targetRef.offsetHeight + 10;
         break;
       }
 
       case TooltipPosition.right: {
-        xy.x = targetOffsset.lefteft + this.targetRef.offsetWidth + 10;
+        xy.x = targetOffsset.left + this.targetRef.offsetWidth + 10;
         xy.y = targetOffsset.top + (this.targetRef.offsetHeight / 2) - (this.ref.offsetHeight / 2);
         break;
       }

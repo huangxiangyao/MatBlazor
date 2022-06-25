@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
-using Microsoft.AspNetCore.Components;
 
 namespace MatBlazor.DevUtils.Core
 {
@@ -38,9 +37,15 @@ namespace MatBlazor.DevUtils.Core
 //                }
 
 
-                    if (type.Name.StartsWith("Base"))
+                    if (type.Name.StartsWith("Base") || type.Name.EndsWith("Internal") || type.Name.EndsWith("Internal`1"))
                     {
                         continue;
+                    }
+
+
+                    if (type == typeof(MatSelectItem<>))
+                    {
+
                     }
 
                     var typeName = GetTypeName(type, true);
@@ -59,7 +64,7 @@ namespace MatBlazor.DevUtils.Core
                     sb.AppendLine();
                     //@if (Secondary) { <h3 class="mat-h3">MatProgressBar</h3> } else { <h3 class="mat-h3">MatProgressBar</h3> }
                     sb.AppendLine(
-                        $"@if (!Secondary) {{<h3 class=\"mat-h3\">{HtmlEncode(typeName)}</h3> }} else {{ <h5 class=\"mat-h5\">{HtmlEncode(typeName)}</h5> }}");
+                        $"@if (!Secondary) {{<h3 class=\"mat-h3\">@Header</h3> }} else {{ <h5 class=\"mat-h5\">@Header</h5> }}");
                     sb.AppendLine();
                     var typeXml = FindDocXml(xml, type);
                     if (typeXml != null)
@@ -95,7 +100,7 @@ namespace MatBlazor.DevUtils.Core
 
 //                sb.AppendLine($"<h5 class=\"mat-h5\">Documentation</h5>");
 
-                    sb.AppendLine($"<div><table class=\"article-table mat-elevation-z5\">");
+                    sb.AppendLine($"<div><table class=\"article-table mat-elevation-z5 mdc-theme--surface\">");
                     sb.AppendLine($"\t<tr>");
                     sb.AppendLine($"\t\t<th>Name</th>");
                     sb.AppendLine($"\t\t<th>Type</th>");
@@ -140,6 +145,17 @@ namespace MatBlazor.DevUtils.Core
                     sb.AppendLine($"</table></div>");
 
 
+                    sb.AppendLine("");
+                    sb.AppendLine("");
+                    sb.AppendLine("@code");
+                    sb.AppendLine("{");
+                    sb.AppendLine("");
+                    sb.AppendLine("\t[Parameter]");
+                    sb.AppendLine($"\tpublic string Header {{ get; set; }} = \"{typeName}\";");
+                    sb.AppendLine("");
+                    sb.AppendLine("}");
+
+
                     File.WriteAllText(outFilePath, sb.ToString());
                 }
                 catch (Exception e)
@@ -171,7 +187,7 @@ namespace MatBlazor.DevUtils.Core
                 {
                     while (type != null && type.Assembly == Assembly)
                     {
-                        var key = $"T:{type.FullName}";
+                        var key = $"T:{type.Namespace}.{type.Name}";
                         var el = membersEl.Elements("member").FirstOrDefault(i => i.Attribute("name").Value == key);
                         if (el != null)
                         {
@@ -198,7 +214,7 @@ namespace MatBlazor.DevUtils.Core
             if (xml.Root != null)
             {
                 var membersEl = xml.Root.Element("members");
-                if (membersEl != null)
+                if (membersEl != null) 
                 {
                     string key;
                     if (member.DeclaringType.IsGenericType)

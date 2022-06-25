@@ -4,13 +4,20 @@
 @* ALL MANUAL CHANGES WILL BE REMOVED! *@
 
 
-@if (!Secondary) {<h3 class="mat-h3">MatDatePicker</h3> } else { <h5 class="mat-h5">MatDatePicker</h5> }
+@if (!Secondary) {<h3 class="mat-h3">@Header</h3> } else { <h5 class="mat-h5">@Header</h5> }
 
-<div><table class="article-table mat-elevation-z5">
+<p>Material Design Datetime picker for Blazor</p>
+
+<div><table class="article-table mat-elevation-z5 mdc-theme--surface">
 	<tr>
 		<th>Name</th>
 		<th>Type</th>
 		<th>Description</th>
+	</tr>
+	<tr>
+		<td style="font-weight: bold;">TValue</td>
+		<td>Generic argument</td>
+		<td>DateTime, DateTime?</td>
 	</tr>
 	<tr>
 		<td>AllowInput</td>
@@ -128,6 +135,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>InputAttributes</td>
+		<td>IDictionary&lt;String,Object&gt;</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>InputClass</td>
 		<td>String</td>
 		<td>Css class of input element</td>
@@ -140,6 +152,21 @@
 	<tr>
 		<td>Label</td>
 		<td>String</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Locale</td>
+		<td>String</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Maximum</td>
+		<td>Nullable&lt;DateTime&gt;</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>Minimum</td>
+		<td>Nullable&lt;DateTime&gt;</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -183,6 +210,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>Position</td>
+		<td>MatDatePickerPosition</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ReadOnly</td>
 		<td>Boolean</td>
 		<td>When true, it specifies that an input field is read-only.</td>
@@ -213,18 +245,23 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>ValidationDisabled</td>
+		<td>Boolean</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>Value</td>
-		<td>Nullable&lt;DateTime&gt;</td>
+		<td>TValue</td>
 		<td>Gets or sets the value of the input. This should be used with two-way binding.</td>
 	</tr>
 	<tr>
 		<td>ValueChanged</td>
-		<td>EventCallback&lt;Nullable&lt;DateTime&gt;&gt;</td>
+		<td>EventCallback&lt;TValue&gt;</td>
 		<td>Gets or sets a callback that updates the bound value.</td>
 	</tr>
 	<tr>
 		<td>ValueExpression</td>
-		<td>Expression&lt;Func&lt;Nullable&lt;DateTime&gt;&gt;&gt;</td>
+		<td>Expression&lt;Func&lt;TValue&gt;&gt;</td>
 		<td>Gets or sets an expression that identifies the bound value.</td>
 	</tr>
 	<tr>
@@ -233,3 +270,12 @@
 		<td>Returned ElementRef reference for DOM element.</td>
 	</tr>
 </table></div>
+
+
+@code
+{
+
+	[Parameter]
+	public string Header { get; set; } = "MatDatePicker";
+
+}

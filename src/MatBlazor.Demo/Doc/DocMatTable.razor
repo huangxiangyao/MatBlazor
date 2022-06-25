@@ -4,11 +4,11 @@
 @* ALL MANUAL CHANGES WILL BE REMOVED! *@
 
 
-@if (!Secondary) {<h3 class="mat-h3">MatTable</h3> } else { <h5 class="mat-h5">MatTable</h5> }
+@if (!Secondary) {<h3 class="mat-h3">@Header</h3> } else { <h5 class="mat-h5">@Header</h5> }
 
 <p>Mat Table display a table data.</p>
 
-<div><table class="article-table mat-elevation-z5">
+<div><table class="article-table mat-elevation-z5 mdc-theme--surface">
 	<tr>
 		<th>Name</th>
 		<th>Type</th>
@@ -38,6 +38,16 @@
 		<td>Class</td>
 		<td>String</td>
 		<td>Specifies one or more classnames for an DOM element.</td>
+	</tr>
+	<tr>
+		<td>CurrentPage</td>
+		<td>Int32</td>
+		<td>The current page, starting from one.</td>
+	</tr>
+	<tr>
+		<td>CurrentPageChanged</td>
+		<td>Action&lt;Int32&gt;</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>DebounceMilliseconds</td>
@@ -82,12 +92,17 @@
 	<tr>
 		<td>MatTableHeader</td>
 		<td>RenderFragment</td>
-		<td></td>
+		<td>The table header</td>
 	</tr>
 	<tr>
 		<td>MatTableRow</td>
 		<td>RenderFragment&lt;TableItem&gt;</td>
-		<td></td>
+		<td>Renders the list of items within the table</td>
+	</tr>
+	<tr>
+		<td>OnRowDbClick</td>
+		<td>EventCallback&lt;Object&gt;</td>
+		<td>Action to execute on row item</td>
 	</tr>
 	<tr>
 		<td>PageLabel</td>
@@ -108,6 +123,11 @@
 		<td>PageSize</td>
 		<td>Int32</td>
 		<td>The number of rows per page.</td>
+	</tr>
+	<tr>
+		<td>PageSizeChanged</td>
+		<td>Action&lt;Int32&gt;</td>
+		<td></td>
 	</tr>
 	<tr>
 		<td>PageSizeParamName</td>
@@ -160,6 +180,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>SelectionChanged</td>
+		<td>Action&lt;Object&gt;</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ShowFooter</td>
 		<td>Boolean</td>
 		<td>Specifies the Table Footer visibility.</td>
@@ -190,8 +215,22 @@
 		<td>Specifies an inline style for an DOM element.</td>
 	</tr>
 	<tr>
+		<td>UseSortHeaderRow</td>
+		<td>Boolean</td>
+		<td>Allows the header row to be sorted</td>
+	</tr>
+	<tr>
 		<td>Ref</td>
 		<td>ElementReference</td>
 		<td>Returned ElementRef reference for DOM element.</td>
 	</tr>
 </table></div>
+
+
+@code
+{
+
+	[Parameter]
+	public string Header { get; set; } = "MatTable";
+
+}

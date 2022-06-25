@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MatBlazor
+﻿namespace MatBlazor
 {
-    public class MatNumericUpDownField : MatNumericUpDownFieldType<decimal?>
+    public enum MatNumericUpDownFieldType
     {
+        Numeric,
+        Currency,
+        Percent
     }
 }

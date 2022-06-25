@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 namespace MatBlazor
 {
@@ -42,42 +39,26 @@ namespace MatBlazor
         protected BaseMatDomComponent()
         {
             ClassMapper
-                .Get(() => this.Class)
-                .Get(() => this.Theme?.GetClass());
+                .Get(() => Class)
+                .Get(() => Theme?.GetClass());
+            
+            StyleMapper.Get(() => Style);
         }
 
         /// <summary>
         /// Specifies one or more classnames for an DOM element.
         /// </summary>
         [Parameter]
-        public string Class
-        {
-            get => _class;
-            set { _class = value; }
-        }
+        public string Class { get; set; }
 
 
         /// <summary>
         /// Specifies an inline style for an DOM element.
         /// </summary>
         [Parameter]
-        public string Style
-        {
-            get => _style;
-            set
-            {
-                _style = value;
-                this.StateHasChanged();
-            }
-        }
+        public string Style { get; set; }
 
 
-        protected virtual string GenerateStyle()
-        {
-            return Style;
-        }
-
-        private string _class;
-        private string _style;
+        protected StyleMapper StyleMapper = new StyleMapper();
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Threading.Tasks;
 
 namespace MatBlazor
 {
@@ -24,14 +22,17 @@ namespace MatBlazor
         public bool AllowSelection { get; set; }
 
         [Parameter]
+        public object RowItem { get; set; }
+
+        [Parameter]
         public EventCallback<bool> SelectedChanged { get; set; }
 
         public async Task ToggleSelectedAsync()
         {
-            this.Selected = !this.Selected;
-            await SelectedChanged.InvokeAsync(this.Selected);
-            await this.Table.ToggleSelectedAsync(this);
-            this.StateHasChanged();            
+            Selected = !Selected;
+            await SelectedChanged.InvokeAsync(Selected);
+            await Table.ToggleSelectedAsync(this);
+            StateHasChanged();            
         }
 
         public BaseTableRow()
@@ -42,11 +43,11 @@ namespace MatBlazor
                 .If("mdc-table-row-selected", () => Selected);
         }
 
-        protected async void OnClickHandler(MouseEventArgs e)
+        protected async Task OnClickHandler(MouseEventArgs _)
         {
-            if (this.AllowSelection)
+            if (AllowSelection)
             {
-                await this.ToggleSelectedAsync();
+                await ToggleSelectedAsync();
             }
         }
     }

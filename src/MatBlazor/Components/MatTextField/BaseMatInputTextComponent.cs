@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MatBlazor
 {
-    public abstract class BaseMatInputTextComponent<T> : BaseMatInputTextElementComponent<T>
+    public abstract class BaseMatInputTextComponent<TValue> : BaseMatInputTextElementComponent<TValue>
     {
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -14,8 +14,12 @@ namespace MatBlazor
         [Parameter]
         public EventCallback<FocusEventArgs> OnFocus { get; set; }
 
+        protected MatEventCallback<FocusEventArgs> OnFocusEvent;
+
         [Parameter]
         public EventCallback<FocusEventArgs> OnFocusOut { get; set; }
+
+        protected MatEventCallback<FocusEventArgs> OnFocusOutEvent;
 
         [Parameter]
         public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
@@ -91,7 +95,6 @@ namespace MatBlazor
         public string Type { get; set; } = "text";
 
 
-
         protected virtual EventCallback<KeyboardEventArgs> OnKeyDownEvent()
         {
             return this.OnKeyDown;
@@ -102,23 +105,12 @@ namespace MatBlazor
         /// Css class of input element
         /// </summary>
         [Parameter]
-        public string InputClass
-        {
-            get => _inputClass;
-            set
-            {
-                _inputClass = value;
-            }
-        }
-
+        public string InputClass { get; set; }
         /// <summary>
         /// Style attribute of input element
         /// </summary>
         [Parameter]
         public string InputStyle { get; set; }
-
-        private string _value;
-        private string _inputClass;
 
         protected ClassMapper LabelClassMapper = new ClassMapper();
         protected ClassMapper InputClassMapper = new ClassMapper();
@@ -132,9 +124,15 @@ namespace MatBlazor
 
         protected BaseMatInputTextComponent()
         {
+            OnFocusEvent = new MatEventCallback<FocusEventArgs>(this, () => OnFocus);
+            OnFocusOutEvent = new MatEventCallback<FocusEventArgs>(this, () => OnFocusOut);
+
             ClassMapper
+                .Add("mat-text-field")
                 .Add("mdc-text-field")
-                .Add("_mdc-text-field--upgraded")
+                .Get(() => this.FieldClass)
+                .If("mdc-text-field--filled", () => !this.Outlined)
+                // .Add("_mdc-text-field--upgraded")
                 .If("mdc-text-field--with-leading-icon", () => this.Icon != null && !this.IconTrailing)
                 .If("mdc-text-field--with-trailing-icon", () => this.Icon != null && this.IconTrailing)
                 .If("mdc-text-field--box", () => !this.FullWidth && this.Box)
@@ -148,28 +146,26 @@ namespace MatBlazor
                     () => this.FullWidth && this.Icon != null && this.IconTrailing)
                 .If("mdc-text-field--textarea", () => this.TextArea);
 
+            bool TextOrPlaceHolderVisible()
+            {
+                return !string.IsNullOrEmpty(CurrentValueAsString)
+                    || (!string.IsNullOrWhiteSpace(PlaceHolder) && FullWidth);
+            }
+
             LabelClassMapper
                 .Add("mdc-floating-label")
-                .If("mat-floating-label--float-above-outlined", () => Outlined && !string.IsNullOrEmpty(CurrentValueAsString))
-                .If("mdc-floating-label--float-above", () => !string.IsNullOrEmpty(CurrentValueAsString));
+                .If("mat-floating-label--float-above-outlined",
+                    () => Outlined && TextOrPlaceHolderVisible())
+                .If("mdc-floating-label--float-above", () => TextOrPlaceHolderVisible());
 
             InputClassMapper
                 .Get(() => this.InputClass)
-                .Get(() => this.FieldClass)
                 .Add("mat-text-field-input")
                 .Add("mdc-text-field__input")
-                .If("_mdc-text-field--upgraded", () => !string.IsNullOrEmpty(CurrentValueAsString))
+                // .If("_mdc-text-field--upgraded", () => !string.IsNullOrEmpty(CurrentValueAsString))
                 .If("mat-hide-clearbutton", () => this.HideClearButton);
 
-            HelperTextClassMapper
-                .Add("mdc-text-field-helper-text")
-                .If("mdc-text-field-helper-text--persistent", () => HelperTextPersistent)
-                .If("mdc-text-field-helper-text--validation-msg", () => HelperTextValidation);
-
-            CallAfterRender(async () =>
-            {
-                await JsInvokeAsync<object>("matBlazor.matTextField.init", Ref);
-            });
+            CallAfterRender(async () => { await JsInvokeAsync<object>("matBlazor.matTextField.init", Ref); });
         }
     }
 }

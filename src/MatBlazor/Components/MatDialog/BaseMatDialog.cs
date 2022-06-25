@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Threading.Tasks;
 
 namespace MatBlazor
 {
@@ -9,10 +9,11 @@ namespace MatBlazor
     /// </summary>
     public class BaseMatDialog : BaseMatDomComponent
     {
-        private bool _isOpen;
+        public const bool CanBeClosedDefault = true;
 
         // true is the mdc default
-        private bool _canBeClosed = true;
+        private bool _canBeClosed = CanBeClosedDefault;
+        private bool _isOpen;
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -49,26 +50,43 @@ namespace MatBlazor
             get => _canBeClosed;
             set
             {
-                if (CanBeClosed != value)
+                if (CanBeClosed == value) 
+                    return;
+                
+                _canBeClosed = value;
+                CallAfterRender(async () =>
                 {
-                    _canBeClosed = value;
-                    CallAfterRender(async () =>
-                    {
-                        await JsInvokeAsync<object>("matBlazor.matDialog.setCanBeClosed", Ref, value);
-                    });
-                }
+                    await JsInvokeAsync<object>("matBlazor.matDialog.setCanBeClosed", Ref, value);
+                });
             }
         }
 
         private DotNetObjectReference<BaseMatDialog> dotNetObjectRef;
 
+
+        protected ClassMapper SurfaceClassMapper { get; } = new ClassMapper();
+        protected StyleMapper SurfaceStyleMapper { get; } = new StyleMapper();
+
+        [Parameter]
+        public string SurfaceClass { get; set; }
+
+        [Parameter]
+        public string SurfaceStyle { get; set; }
+
+
         public BaseMatDialog()
         {
+            SurfaceClassMapper
+                .Add("mdc-dialog__surface")
+                .Get(() => SurfaceClass);
+
+            SurfaceStyleMapper
+                .Get(() => SurfaceStyle);
 
             ClassMapper.Add("mdc-dialog");
             CallAfterRender(async () =>
             {
-                dotNetObjectRef = dotNetObjectRef ?? CreateDotNetObjectRef(this);
+                dotNetObjectRef ??= CreateDotNetObjectRef(this);
                 await JsInvokeAsync<object>("matBlazor.matDialog.init", Ref, dotNetObjectRef);
             });
         }
@@ -84,7 +102,7 @@ namespace MatBlazor
         {
             _isOpen = false;
             await IsOpenChanged.InvokeAsync(false);
-            this.StateHasChanged();
+            StateHasChanged();
         }
 
         [JSInvokable]
@@ -92,7 +110,7 @@ namespace MatBlazor
         {
             _isOpen = true;
             await IsOpenChanged.InvokeAsync(true);
-            this.StateHasChanged();
+            StateHasChanged();
         }
     }
 }

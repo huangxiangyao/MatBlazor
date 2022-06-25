@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
+using System;
 using System.ComponentModel;
-using System.Text;
-using NUnit.Framework;
 
 namespace MatBlazor.DevUtils
 {
@@ -14,7 +12,7 @@ namespace MatBlazor.DevUtils
         {
             var q = new Uri("http://localhost:62765/DatePicker#Example");
             Console.WriteLine(q.Fragment);
-            var a = new MatSelectNativeType<int>();
+            
         }
         
         [Test]

@@ -7,24 +7,34 @@ namespace MatBlazor
     {
         public override decimal? Increase(decimal? v, decimal? step, decimal? max)
         {
-            var v2 = (v.HasValue || step.HasValue) ? ((v ?? 0) + (step ?? 0)) : (decimal?) null;
-            if (max.HasValue && v2.HasValue)
+            checked
             {
-                return Math.Min(v2.Value, max.Value);
+                try
+                {
+                    var v2 = (v.HasValue || step.HasValue) ? ((v ?? 0) + (step ?? 0)) : (decimal?) null;
+                    return (max.HasValue && v2.HasValue) ? (v2.Value <= max.Value ? v2.Value : max.Value) : v2;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
             }
-
-            return v2;
         }
 
         public override decimal? Decrease(decimal? v, decimal? step, decimal? min)
         {
-            decimal? v2 = (v.HasValue || step.HasValue) ? ((v ?? 0) - (step ?? 0)) : (decimal?) null;
-            if (min.HasValue && v2.HasValue)
+            checked
             {
-                return Math.Max(v2.Value, min.Value);
+                try
+                {
+                    var v2 = (v.HasValue || step.HasValue) ? ((v ?? 0) - (step ?? 0)) : (decimal?) null;
+                    return (min.HasValue && v2.HasValue) ? (v2.Value >= min.Value ? v2.Value : min.Value) : v2;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
             }
-
-            return v2;
         }
 
         public override decimal? Round(decimal? v, int dp)
@@ -37,9 +47,9 @@ namespace MatBlazor
             return v;
         }
 
-        public override decimal? Minimum => null;
-        public override decimal? Maximum => null;
-        public override decimal? Step => 1;
+        public override decimal? GetMinimum() => null;
+        public override decimal? GetMaximum() => null;
+        public override decimal? GetStep() => 1;
 
         public override string FormatValueAsString(decimal? v, string format)
         {

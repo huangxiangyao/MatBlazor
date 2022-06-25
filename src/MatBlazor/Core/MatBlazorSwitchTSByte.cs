@@ -7,14 +7,34 @@ namespace MatBlazor
     {
         public override sbyte Increase(sbyte v, sbyte step, sbyte max)
         {
-            var v2 = (sbyte) (v + step);
-            return v2 <= max ? v2 : max;
+            checked
+            {
+                try
+                {
+                    var v2 = (sbyte) (v + step);
+                    return v2 <= max ? v2 : max;
+                }
+                catch (OverflowException e)
+                {
+                    return max;
+                }
+            }
         }
 
         public override sbyte Decrease(sbyte v, sbyte step, sbyte min)
         {
-            var v2 = (sbyte) (v - step);
-            return v2 >= min ? v2 : min;
+            checked
+            {
+                try
+                {
+                    var v2 = (sbyte) (v - step);
+                    return v2 >= min ? v2 : min;
+                }
+                catch (OverflowException e)
+                {
+                    return min;
+                }
+            }
         }
 
         public override sbyte Round(sbyte v, int dp)
@@ -22,10 +42,10 @@ namespace MatBlazor
             return v;
         }
 
-        public override sbyte Minimum => sbyte.MinValue;
-        public override sbyte Maximum => sbyte.MaxValue;
+        public override sbyte GetMinimum() => sbyte.MinValue;
+        public override sbyte GetMaximum() => sbyte.MaxValue;
 
-        public override sbyte Step => 1;
+        public override sbyte GetStep() => 1;
 
         public override string FormatValueAsString(sbyte v, string format)
         {

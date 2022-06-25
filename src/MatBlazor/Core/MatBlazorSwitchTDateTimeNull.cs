@@ -20,11 +20,11 @@ namespace MatBlazor
             throw new NotImplementedException();
         }
 
-        public override DateTime? Minimum => throw new NotImplementedException();
+        public override DateTime? GetMinimum() => null;
 
-        public override DateTime? Maximum => throw new NotImplementedException();
+        public override DateTime? GetMaximum() => null;
 
-        public override DateTime? Step => throw new NotImplementedException();
+        public override DateTime? GetStep() => throw new NotImplementedException();
 
         public override string FormatValueAsString(DateTime? v, string format)
         {
@@ -32,7 +32,7 @@ namespace MatBlazor
             {
                 return null;
             }
-            
+
             if (v.Value == DateTime.MinValue)
             {
                 return string.Empty;
